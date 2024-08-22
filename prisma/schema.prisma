@@ -12,3 +12,256 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id Int @id @default(autoincrement())
+
+  name           String
+  first_surname  String
+  second_surname String
+
+  email    String @unique
+  login    String @unique
+  password String
+
+  activated       Boolean @default(false)
+  activation_link String  @unique
+
+  avatar_src String @unique
+
+  role Role
+
+  created_at             DateTime               @default(now())
+  updated_at             DateTime               @updatedAt
+  User_Favourite_Product UserFavouriteProduct[]
+  Order                  Order[]
+  Review                 Review[]
+
+  @@map("users")
+}
+
+model Tag {
+  id Int @default(autoincrement())
+
+  name        String  @id @unique
+  description String?
+
+  created_at     DateTime         @default(now())
+  updated_at     DateTime         @updatedAt
+  ProductHaveTag ProductHaveTag[]
+
+  @@map("tags")
+}
+
+model UserFavouriteProduct {
+  id Int @id @default(autoincrement())
+
+  product      Product @relation(fields: [product_name], references: [name])
+  product_name String
+
+  user    User @relation(fields: [user_id], references: [id])
+  user_id Int
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@index([user_id, product_name])
+  @@map("users_favourite_products")
+}
+
+model ProductHaveTag {
+  id Int @id @default(autoincrement())
+
+  product      Product @relation(fields: [product_name], references: [name])
+  product_name String
+
+  tag      Tag    @relation(fields: [tag_name], references: [name])
+  tag_name String
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@index([tag_name, product_name])
+  @@map("products_have_Tags")
+}
+
+model Review {
+  id Int @id @default(autoincrement())
+
+  product      Product @relation(fields: [product_name], references: [name])
+  product_name String
+  user         User    @relation(fields: [user_id], references: [id])
+  user_id      Int
+
+  body String
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("revies")
+}
+
+model Category {
+  id Int @default(autoincrement())
+
+  name        String  @id @unique
+  description String?
+
+  products Product[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("categories")
+}
+
+model Product {
+  id Int @default(autoincrement())
+
+  name     String  @id @unique
+  discount Int     @default(0)
+  popular  Boolean @default(false)
+
+  category      Category @relation(fields: [category_name], references: [name])
+  category_name String
+
+  User_Favourite_Product UserFavouriteProduct[]
+  ProductHaveTag         ProductHaveTag[]
+
+  variants    Variant[]
+  order_items OrderItem[]
+
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
+  CartItem   CartItem[]
+  Review     Review[]
+
+  @@map("products")
+}
+
+model Variant {
+  id Int @id @default(autoincrement())
+
+  name   String @unique
+  height Int
+  width  Int
+  length Int
+  weight Int
+  price  Int
+
+  order_items OrderItem[]
+
+  product      Product    @relation(fields: [product_name], references: [name])
+  product_name String
+  CartItem     CartItem[]
+
+  size_label String @default("Стандартний")
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("variants")
+}
+
+model Order {
+  id Int @id @default(autoincrement())
+
+  customer    User? @relation(fields: [customer_id], references: [id])
+  customer_id Int?
+
+  customer_contacts Json?
+  delivery          Json
+  payment           Json
+
+  total_price Int
+  total_items Int
+
+  items OrderItem[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id Int @id @default(autoincrement())
+
+  order   Order   @relation(fields: [order_id], references: [id])
+  product Product @relation(fields: [product_name], references: [name])
+  color   Color   @relation(fields: [color_name], references: [name])
+  variant Variant @relation(fields: [variant_id], references: [id])
+
+  order_id     Int
+  product_name String
+  color_name   String
+  variant_id   Int
+  amount       Int    @default(1)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("order_items")
+}
+
+model Cart {
+  id Int @id @default(autoincrement())
+
+  items       CartItem[]
+  total_price Int
+  total_items Int
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("carts")
+}
+
+model CartItem {
+  id Int @id @default(autoincrement())
+
+  cart         Cart    @relation(fields: [cart_id], references: [id])
+  cart_id      Int
+  product      Product @relation(fields: [product_name], references: [name])
+  product_name String
+  color        Color   @relation(fields: [color_name], references: [name])
+  color_name   String
+  variant      Variant @relation(fields: [variant_id], references: [id])
+  variant_id   Int
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("cart_items")
+}
+
+model Photo {
+  id     Int     @id @default(autoincrement())
+  name   String?
+  source String  @unique
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("photos")
+}
+
+model Color {
+  id Int @default(autoincrement())
+
+  name String @id @unique
+  hex  String @unique
+
+  order_items OrderItem[]
+
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
+  CartItem   CartItem[]
+
+  @@map("colors")
+}
+
+enum Role {
+  ADMIN
+  USER
+}

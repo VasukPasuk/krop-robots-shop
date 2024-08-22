@@ -1,9 +1,9 @@
 import {Controller, Delete, Get, Patch, Post} from '@nestjs/common';
-import { UsersService } from './users.service';
+import { ReviewsService } from './reviews.service';
 
-@Controller('users')
-export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+@Controller('reviews')
+export class ReviewsController {
+  constructor(private readonly reviewsService: ReviewsService) {}
 
   @Get()
   getMany() {

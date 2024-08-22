@@ -1,9 +1,9 @@
 import {Controller, Delete, Get, Patch, Post} from '@nestjs/common';
-import { UsersService } from './users.service';
+import { ProductsHaveTagsService } from './products_have_tags.service';
 
-@Controller('users')
-export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+@Controller('products-have-tags')
+export class ProductsHaveTagsController {
+  constructor(private readonly productsHaveTagsService: ProductsHaveTagsService) {}
 
   @Get()
   getMany() {
