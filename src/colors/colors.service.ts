@@ -21,15 +21,14 @@ export class ColorsService {
   }
 
   async getMany(pagination: BasePaginationDto) {
-    const {limit, page, order_rule, field} = pagination;
-    const isWhere = field && {[field]: pagination[field]}
-    const items = this.prisma.color.findMany({
+    const {limit, page, order_rule, field, search} = pagination;
+    const isWhere = (field && search) && {[field]: search}
+    const isField = (field && {[field]: order_rule}) || { id: "asc" }
+    const items = await this.prisma.color.findMany({
       where: isWhere,
       skip: (page - 1) * limit,
       take: limit,
-      orderBy: field && {
-        [field]: order_rule,
-      }
+      orderBy: isField
     })
     const count = await this.prisma.color.count({where: isWhere})
     return {

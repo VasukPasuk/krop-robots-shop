@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import {Injectable} from '@nestjs/common';
 
 import {BasePaginationDto} from "../DTO/base-pagination.dto";
 import {PrismaService} from "../utils/prisma.service";
@@ -8,6 +8,7 @@ import {CreateCategoryDto} from "./dto/create-category.dto";
 export class CategoriesService {
   constructor(private readonly prisma: PrismaService) {
   }
+
   async create(createCategoryDto: CreateCategoryDto | CreateCategoryDto[]) {
     const isArray = Array.isArray(createCategoryDto);
     if (isArray) {
@@ -21,15 +22,14 @@ export class CategoriesService {
   }
 
   async getMany(pagination: BasePaginationDto) {
-    const {limit, page, order_rule, field} = pagination;
-    const isWhere = field && {[field]: pagination[field]}
-    const items = this.prisma.category.findMany({
+    const {limit, page, order_rule, field, search} = pagination;
+    const isWhere = (field && search) && {[field]: search}
+    const isField = (field && {[field]: order_rule}) || { id: "asc" }
+    const items = await this.prisma.category.findMany({
       where: isWhere,
       skip: (page - 1) * limit,
       take: limit,
-      orderBy: field && {
-        [field]: order_rule,
-      }
+      orderBy: isField
     })
     const count = await this.prisma.category.count({where: isWhere})
     return {
