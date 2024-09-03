@@ -45,9 +45,9 @@ export class ColorsService {
     return this.prisma.color.delete({where: {name}})
   }
 
-  async updateOne(name: string, data: CreateColorDto) {
+  async updateOne(id: number, data: CreateColorDto) {
     return this.prisma.color.update({
-      where: {name},
+      where: {id},
       data: data
     })
   }

@@ -1,5 +1,6 @@
-import {Controller, Delete, Get, Patch, Post} from '@nestjs/common';
+import {Controller, Delete, Get, Param, Patch, Post, Query} from '@nestjs/common';
 import { ProductsHaveTagsService } from './products_have_tags.service';
+import {ProductOnTagPaginationDto} from "./dto/prod-on-tag-pagination.dto";
 
 @Controller('products-have-tags')
 export class ProductsHaveTagsController {
@@ -36,5 +37,10 @@ export class ProductsHaveTagsController {
 
   @Patch()
   updateMany() {
+  }
+
+  @Get('/products/:name')
+  getTagsRelatedToProduct(@Param("name") name: string, @Query() pagination: ProductOnTagPaginationDto) {
+    return this.productsHaveTagsService.getTagsRelatedToProduct(name, pagination)
   }
 }

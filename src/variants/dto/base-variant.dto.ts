@@ -1,13 +1,12 @@
-export class VariantDto {
+export class BaseVariantDto {
   id: number
-  name: string
   height: number
   width: number
   length: number
   weight: number
   price: number
-  product_name: string
+  product_id: number
   size_label: string
-  created_at: Date
-  updated_at: Date
+  created_at: string
+  updated_at: string
 }

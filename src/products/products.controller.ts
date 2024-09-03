@@ -1,8 +1,25 @@
-import {Body, Controller, Delete, Get, Param, Patch, Post, Query} from '@nestjs/common';
-import { ProductsService } from './products.service';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param, ParseIntPipe,
+  Patch,
+  Post,
+  Query, Req,
+  UploadedFiles,
+  UseInterceptors
+} from '@nestjs/common';
+import {ProductsService} from './products.service';
 import {ProductPaginationDto} from "./dto/product-pagination.dto";
 import {CreateProductDto} from "./dto/create-product.dto";
+import {FilesInterceptor} from '@nestjs/platform-express';
+import {ProductIncludeDto} from "./dto/product-include.dto";
+import {ApiTags} from "@nestjs/swagger";
+import {UpdateProductDto} from "./dto/update-product.dto";
 
+
+@ApiTags("Products")
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {
@@ -13,14 +30,15 @@ export class ProductsController {
     return this.productsService.getMany(pagination)
   }
 
-  @Get(":name")
-  getOne(@Param("name") name: string) {
-    return this.productsService.getOne(name)
+  @Get(":identifier")
+  getOne(@Param("identifier") identifier: string) {
+    return this.productsService.getOne(identifier)
   }
 
   @Post()
-  create(@Body() createColorDto: CreateProductDto[] | CreateProductDto) {
-    return this.productsService.create(createColorDto)
+  @UseInterceptors(FilesInterceptor("photos"))
+  create(@Body() createProductDto: CreateProductDto, @UploadedFiles() photos: Array<Express.Multer.File>) {
+    return this.productsService.create(createProductDto, photos)
   }
 
   @Delete()
@@ -34,7 +52,7 @@ export class ProductsController {
   }
 
   @Patch(':name')
-  updateOneByName(@Param("name") name: string, @Body() data: CreateProductDto) {
+  updateOneByName(@Param("name") name: string, @Body() data: UpdateProductDto) {
     return this.productsService.updateOne(name, data)
   }
 
@@ -43,4 +61,14 @@ export class ProductsController {
     return this.productsService.updateMany(data)
   }
 
+
+  @Get("admin/list")
+  getAnalytics(@Query() pagination: ProductPaginationDto) {
+    return this.productsService.getAdminAnalytics(pagination)
+  }
+
+  @Get("name/:id")
+  getNameById(@Param("id", ParseIntPipe) id: number) {
+    return this.productsService.getNameById(id)
+  }
 }

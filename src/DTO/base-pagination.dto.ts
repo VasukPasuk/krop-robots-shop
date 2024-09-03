@@ -22,12 +22,11 @@ export class BasePaginationDto {
   order_rule: "asc" | "desc" = "desc";
 
   @IsOptional()
-  @IsIn(["hex", "name"] as Array<keyof Color>)
-  field: keyof Color
+  field?: string
 
   @IsOptional()
   @Transform(({value}) => value.toLowerCase())
-  search: string
+  search?: string
 
 
   @OptionalBoolean()

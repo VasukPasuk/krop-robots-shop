@@ -12,7 +12,7 @@ export class FilesService {
   constructor(private readonly prisma: PrismaService) {
   }
 
-  upload(file: Express.Multer.File, destination: DestinationUnion): [string, DestinationUnion] {
+  upload(file: Express.Multer.File, destination: DestinationUnion, basename: string): [string, DestinationUnion] {
     try {
       // Destruct the array splited by dot to get file name and extension
       const [fileName, fileExtension] = file.originalname.split(".");
@@ -37,4 +37,11 @@ export class FilesService {
       throw new InternalServerErrorException();
     }
   }
+  async delete(fileName: string, destination: DestinationUnion) {
+    const filePath = path.join(__dirname, "..", "..", 'static', destination, fileName);
+    return fs.unlink(filePath, (e) => {
+      if (e) throw new InternalServerErrorException(e.message);
+    })
+  }
+
 }

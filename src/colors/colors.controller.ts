@@ -1,4 +1,4 @@
-import {Body, Controller, Delete, Get, Param, Patch, Post, Query} from '@nestjs/common';
+import {Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query} from '@nestjs/common';
 import { ColorsService } from './colors.service';
 import {CreateColorDto} from "./dto/create-color.dto";
 import {ColorPaginationDto} from "./dto/color-pagination.dto";
@@ -34,9 +34,9 @@ export class ColorsController {
     return this.colorsService.deleteOne(name)
   }
 
-  @Patch(':name')
-  updateOneByName(@Param("name") name: string, @Body() data: CreateColorDto) {
-    return this.colorsService.updateOne(name, data)
+  @Patch(':id')
+  updateOneByName(@Param("id", ParseIntPipe) id: number, @Body() data: CreateColorDto) {
+    return this.colorsService.updateOne(id, data)
   }
 
   @Patch()

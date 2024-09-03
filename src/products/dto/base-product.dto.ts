@@ -6,6 +6,7 @@ export class BaseProductDto {
   discount: number
   popular: boolean
   category_name: string
+  description: string
   created_at: Date
   updated_at: Date
 }
