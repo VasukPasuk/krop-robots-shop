@@ -15,7 +15,7 @@ import {ProductPaginationDto} from "./dto/product-pagination.dto";
 import {CreateProductDto} from "./dto/create-product.dto";
 import {FilesInterceptor} from '@nestjs/platform-express';
 import {ProductIncludeDto} from "./dto/product-include.dto";
-import {ApiTags} from "@nestjs/swagger";
+import {ApiTags, ApiOperation} from "@nestjs/swagger";
 import {UpdateProductDto} from "./dto/update-product.dto";
 
 
@@ -70,5 +70,13 @@ export class ProductsController {
   @Get("name/:id")
   getNameById(@Param("id", ParseIntPipe) id: number) {
     return this.productsService.getNameById(id)
+  }
+
+  @ApiOperation({
+    description: "Get products for the shop catalog."
+  })
+  @Get("catalog/list")
+  getCatalog(@Query() pagination: ProductPaginationDto) {
+    return this.productsService.getCatalog(pagination)
   }
 }

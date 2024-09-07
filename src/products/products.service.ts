@@ -60,16 +60,23 @@ export class ProductsService {
   }
 
   async getMany(pagination: ProductPaginationDto) {
-    const {limit, page, order_rule, field, search} = pagination;
+    const {limit, page, order_rule, field, search, include} = pagination;
     const isWhere = (field && search) && {[field]: search}
     const isField = (field && {[field]: order_rule}) || {id: "asc"}
     const items = await this.prisma.product.findMany({
       where: isWhere,
       skip: (page - 1) * limit,
       take: limit,
-      orderBy: isField
+      orderBy: isField,
+      include: {
+        photos: include ? {
+          take: 1
+        } : undefined,
+        variants: Boolean(include.variants)
+      }
     })
     const count = await this.prisma.product.count({where: isWhere})
+
     return {
       items,
       count,
@@ -94,24 +101,11 @@ export class ProductsService {
     return this.prisma.product.delete({where: {name}})
   }
 
-  async updateOne(name: string, {tags, ...rest}: UpdateProductDto) {
-    if (!tags.length) {
-      return this.prisma.product.update({
-        where: {name},
-        data: rest,
-      })
-    }
-
-    const relatedTags = tags.map((tag) => ({product_name: name, tag_name: tag.name}))
-    const [res1, res2] = await this.prisma.$transaction([
-      this.prisma.productHaveTag.createMany({data: [...relatedTags]}),
-      this.prisma.product.update({
-        where: {name},
-        data: rest,
-      })
-    ])
-
-    return res2
+  async updateOne(name: string, updateProductDto: UpdateProductDto) {
+    return this.prisma.product.update({
+      where: {name},
+      data: updateProductDto,
+    })
   }
 
 
@@ -147,5 +141,35 @@ export class ProductsService {
     const result = await this.prisma.product.findUnique({where: {id}, select: {name: true}})
     if (!result) throw new NotFoundException(`Продукту з ідентифікатором ${id} не існує.`)
     return result
+  }
+
+
+  async getCatalog(pagination: ProductPaginationDto) {
+    const {limit, include, page, search, field, order_rule, products_count} = pagination;
+
+    const [items, count] = await Promise.all([
+      this.prisma.product.findMany({
+        skip: (page - 1) * limit,
+        take: limit,
+        include: {
+          photos: {
+            take: 1
+          },
+          variants: {
+            where: {
+              size_label: "Стандарт"
+            }
+          }
+        }
+      }),
+      this.prisma.product.count({
+        where: undefined,
+      }),
+    ])
+
+    return {
+      items,
+      count
+    }
   }
 }

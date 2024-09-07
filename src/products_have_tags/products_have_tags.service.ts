@@ -1,6 +1,8 @@
 import {Injectable} from '@nestjs/common';
 import {PrismaService} from "../utils/prisma.service";
 import {ProductOnTagPaginationDto} from "./dto/prod-on-tag-pagination.dto";
+import {UnpinDto} from "./dto/unpin.dto";
+import {AttachDto} from "./dto/attach.dto";
 
 @Injectable()
 export class ProductsHaveTagsService {
@@ -38,6 +40,27 @@ export class ProductsHaveTagsService {
   async attachTagsToProduct(product_name: string, tag_name: string[]) {
     return this.prisma.productHaveTag.createMany({
       data: [...tag_name.map((id) => ({product_name, tag_name: id}))]
+    })
+  }
+
+
+  async attachTagToProduct(data: AttachDto) {
+    return this.prisma.productHaveTag.create({
+      data: {
+        tag_name: data.tag_name,
+        product_name: data.product_name
+      }
+    })
+  }
+
+  unpinTagFromProduct(data: UnpinDto) {
+    return this.prisma.productHaveTag.delete({
+      where: {
+        tag_name_product_name: {
+          tag_name: data.tag_name,
+          product_name: data.product_name
+        }
+      }
     })
   }
 }

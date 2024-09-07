@@ -3,6 +3,7 @@ import {Injectable} from '@nestjs/common';
 import {BasePaginationDto} from "../DTO/base-pagination.dto";
 import {PrismaService} from "../utils/prisma.service";
 import {CreateCategoryDto} from "./dto/create-category.dto";
+import {UpdateCategoryDto} from "./dto/update-category.dto";
 
 @Injectable()
 export class CategoriesService {
@@ -24,7 +25,7 @@ export class CategoriesService {
   async getMany(pagination: BasePaginationDto) {
     const {limit, page, order_rule, field, search} = pagination;
     const isWhere = (field && search) && {[field]: search}
-    const isField = (field && {[field]: order_rule}) || { id: "asc" }
+    const isField = (field && {[field]: order_rule}) || {id: "asc"}
     const items = await this.prisma.category.findMany({
       where: isWhere,
       skip: (page - 1) * limit,
@@ -46,10 +47,13 @@ export class CategoriesService {
     return this.prisma.category.delete({where: {name}})
   }
 
-  async updateOne(name: string, data: CreateCategoryDto) {
+  updateOne(name: string, data: UpdateCategoryDto) {
     return this.prisma.category.update({
-      where: {name},
-      data: data
+      where: {name: name},
+      data: {
+        description: data.description,
+        name: data.name,
+      }
     })
   }
 
