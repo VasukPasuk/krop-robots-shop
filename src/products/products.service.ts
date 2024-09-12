@@ -172,4 +172,19 @@ export class ProductsService {
       count
     }
   }
+
+  async getProductWithDetails(name: string) {
+    return this.prisma.product.findUnique({
+      where: {name},
+      include: {
+        variants: true, photos: true, category: true,
+        ProductHaveTag: {
+          select: {
+            tag_name: true,
+            tag: true
+          }
+        }
+      }
+    })
+  }
 }

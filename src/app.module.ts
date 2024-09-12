@@ -21,6 +21,8 @@ import {FilesService} from './files/files.service';
 import {PhotosModule} from './photos/photos.module';
 import {ServeStaticModule} from "@nestjs/serve-static";
 import { join } from 'path';
+import {ScheduleModule} from "@nestjs/schedule";
+import { TelegramModule } from './telegram/telegram.module';
 
 @Module({
   imports: [UsersModule,
@@ -36,10 +38,13 @@ import { join } from 'path';
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'static', "products"),
     }),
+    ScheduleModule.forRoot(),
+    TelegramModule
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService, FilesService],
 })
+
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(LoggingMiddleware).forRoutes('*');
