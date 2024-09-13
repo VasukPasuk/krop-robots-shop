@@ -19,7 +19,7 @@ model User {
   password String
 
   activated       Boolean @default(false)
-  activation_link String  @unique
+  activation_link String? @unique
 
   avatar_src String @unique
 

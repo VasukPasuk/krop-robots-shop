@@ -115,13 +115,12 @@ export class ProductsService {
 
 
   async getAdminAnalytics(pagination: ProductPaginationDto) {
-    const {limit, page, order_rule, field, search} = pagination;
-    const isWhere = (field && search) && {[field]: search}
-    const isField = (field && {[field]: order_rule}) || {id: "asc"}
+    const isWhere = (pagination.field && pagination.search) && {[pagination.field]: pagination.search}
+    const isField = (pagination.field && {[pagination.field]: pagination.order_rule}) || {id: "asc"}
     const items = await this.prisma.product.findMany({
       where: isWhere,
-      skip: (page - 1) * limit,
-      take: limit,
+      skip: (pagination.page - 1) * pagination.limit,
+      take: pagination.limit,
       orderBy: isField,
       include: {
         photos: {
@@ -145,17 +144,34 @@ export class ProductsService {
 
 
   async getCatalog(pagination: ProductPaginationDto) {
-    const {limit, include, page, search, field, order_rule, products_count} = pagination;
+    const whereClause = {
+      [pagination.searchField]: (pagination.searchField && pagination.searchValue) ? {
+        contains: pagination.searchValue,
+        mode: "insensitive",
+      } : undefined,
+      variants: {
+        some: {
+          price: {
+            lte: pagination.maxPrice,
+            gte: pagination.minPrice,
+          }
+        }
+      },
+      published: true
+    };
+
 
     const [items, count] = await Promise.all([
       this.prisma.product.findMany({
-        skip: (page - 1) * limit,
-        take: limit,
+        skip: (pagination.page - 1) * pagination.limit,
+        take: pagination.limit,
+        where: whereClause,
         include: {
           photos: {
             take: 1
           },
           variants: {
+            take: 1,
             where: {
               size_label: "Стандарт"
             }
@@ -163,9 +179,15 @@ export class ProductsService {
         }
       }),
       this.prisma.product.count({
-        where: undefined,
+        where: whereClause,
       }),
     ])
+
+    // From high to low price
+    // items.sort((a, b) => b.variants[0].price - a.variants[0].price)
+
+    // From low to high price
+    // items.sort((a, b) => b.variants[0].price - a.variants[0].price)
 
     return {
       items,
@@ -177,7 +199,9 @@ export class ProductsService {
     return this.prisma.product.findUnique({
       where: {name},
       include: {
-        variants: true, photos: true, category: true,
+        variants: true,
+        photos: true,
+        category: true,
         ProductHaveTag: {
           select: {
             tag_name: true,
@@ -186,5 +210,31 @@ export class ProductsService {
         }
       }
     })
+  }
+
+  async getAdminCatalog(pagination: ProductPaginationDto) {
+
+    const [items, count] = await Promise.all([
+      this.prisma.product.findMany({
+        skip: (pagination.page - 1) * pagination.limit,
+        take: pagination.limit,
+        include: {
+          photos: {
+            take: 1
+          },
+          variants: {
+            take: 1,
+            where: {
+              size_label: "Стандарт"
+            }
+          }
+        }
+      }),
+      this.prisma.product.count(),
+    ])
+    return {
+      items,
+      count
+    }
   }
 }

@@ -1,13 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import {Injectable} from '@nestjs/common';
 import {PrismaService} from "../utils/prisma.service";
 import {UserPaginationDto} from "./dto/user-pagination.dto";
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {
+  }
 
   async getMany(pagination: UserPaginationDto) {
-    const { limit, page, order_rule, field, search } = pagination;
+    const {limit, page, order_rule, field, search} = pagination;
 
     const isWhere = (field && search) && {[field]: search}
     const isField = (field && {[field]: order_rule}) || {id: "asc"}
@@ -25,5 +26,14 @@ export class UsersService {
       items,
       count,
     }
+  }
+
+  async findOne(login: string) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        login
+      },
+    })
+    return user
   }
 }

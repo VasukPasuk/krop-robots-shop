@@ -1,4 +1,4 @@
-import {Controller, Delete, Get, Patch, Post} from '@nestjs/common';
+import {Controller, Delete, Get, Param, Patch, Post} from '@nestjs/common';
 import { UsersService } from './users.service';
 import {ApiTags} from "@nestjs/swagger";
 import {UserPaginationDto} from "./dto/user-pagination.dto";
@@ -9,36 +9,8 @@ import {UserPaginationDto} from "./dto/user-pagination.dto";
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Get()
-  getMany(pagination: UserPaginationDto) {
-    return this.usersService.getMany(pagination)
-  }
-
-  @Get(":id")
-  getOne() {
-  }
-
-  @Post()
-  createMany() {
-  }
-
-  @Post()
-  createOne() {
-  }
-
-  @Delete()
-  deleteMany() {
-  }
-
-  @Delete(':id')
-  deleteOneById() {
-  }
-
-  @Patch(':id')
-  updateOneById() {
-  }
-
-  @Patch()
-  updateMany() {
+  @Get(':login')
+  findOne(@Param('login') login: string) {
+    return this.usersService.findOne(login)
   }
 }

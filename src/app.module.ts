@@ -20,9 +20,13 @@ import {CartItemsModule} from './cart_items/cart_items.module';
 import {FilesService} from './files/files.service';
 import {PhotosModule} from './photos/photos.module';
 import {ServeStaticModule} from "@nestjs/serve-static";
-import { join } from 'path';
+import {join} from 'path';
 import {ScheduleModule} from "@nestjs/schedule";
-import { TelegramModule } from './telegram/telegram.module';
+import {TelegramModule} from './telegram/telegram.module';
+import {AuthModule} from "./auth/auth.module";
+import {APP_GUARD} from "@nestjs/core";
+import {RolesGuard} from "./__guards/roles.guard";
+import {JwtService} from "@nestjs/jwt";
 
 @Module({
   imports: [UsersModule,
@@ -39,10 +43,20 @@ import { TelegramModule } from './telegram/telegram.module';
       rootPath: join(__dirname, '..', 'static', "products"),
     }),
     ScheduleModule.forRoot(),
-    TelegramModule
+    TelegramModule,
+    AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService, PrismaService, FilesService],
+  providers: [
+    AppService,
+    PrismaService,
+    FilesService,
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
+    JwtService
+  ],
 })
 
 export class AppModule {

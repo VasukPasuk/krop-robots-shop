@@ -16,6 +16,7 @@ import {CreateProductDto} from "./dto/create-product.dto";
 import {FilesInterceptor} from '@nestjs/platform-express';
 import {ApiTags, ApiOperation} from "@nestjs/swagger";
 import {UpdateProductDto} from "./dto/update-product.dto";
+import {Roles} from "../decorators/roles.decorator";
 
 
 @ApiTags("Products")
@@ -71,6 +72,7 @@ export class ProductsController {
     return this.productsService.getNameById(id)
   }
 
+
   @ApiOperation({
     description: "Get products for the shop catalog."
   })
@@ -81,10 +83,23 @@ export class ProductsController {
 
 
   @ApiOperation({
-    description: "Get product information with details (reviews, tags, variants, photos)"
+    description: "Get product information with details (tags, variants, photos)."
   })
   @Get("/:name/with_details")
   getProductWithDetails(@Param("name") name: string) {
     return this.productsService.getProductWithDetails(name)
   }
+
+  @ApiOperation({
+    description: "Get product information with details (tags, variants, photos) for admin page of products."
+  })
+  @Roles("ADMIN")
+  @Get("admin-catalog/list")
+  getAdminCatalog(@Query() pagination: ProductPaginationDto) {
+    return this.productsService.getAdminCatalog(pagination)
+  }
 }
+
+
+
+
