@@ -126,6 +126,7 @@ export class TelegramController {
       'Оберіть команду:',
       Markup.keyboard([['/week_orders', '/all_orders', '/today_orders', '/fulfill', "/order"], ['/logout', '/help']])
         .resize()
+
         .oneTime()
     );
   }
