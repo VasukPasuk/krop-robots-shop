@@ -24,12 +24,12 @@ export class ProductPaginationDto extends BasePaginationDto {
   @Transform(({value}) => value.split(','))
   @IsNotEmpty()
   @IsOptional()
-  filterCategories?: string[];
+  filterCategories: string[] = [];
 
   @Transform(({value}) => value.split(','))
   @IsNotEmpty()
   @IsOptional()
-  filterTags?: string[];
+  filterTags: string[] = [];
 
   @Type(() => Number)
   @IsNumber()
@@ -40,8 +40,4 @@ export class ProductPaginationDto extends BasePaginationDto {
   @IsNumber()
   @Min(0)
   minPrice = 0;
-
-  @IsIn([ "ADMIN" , "CUSTOMER"])
-  @IsString()
-  mode: "ADMIN" | "CUSTOMER" = "CUSTOMER";
 }

@@ -1,6 +1,7 @@
-import {Controller, Delete, Get, Patch, Post} from '@nestjs/common';
+import {Body, Controller, Delete, Get, Patch, Post} from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import {ApiTags} from "@nestjs/swagger";
+import {CreateOrderDto} from "./dto/create-order.dto";
 
 
 @ApiTags('Orders')
@@ -10,34 +11,11 @@ export class OrdersController {
 
   @Get()
   getMany() {
-
-  }
-
-  @Get(":id")
-  getOne() {
+    return this.ordersService.getMany()
   }
 
   @Post()
-  createMany() {
-  }
-
-  @Post()
-  createOne() {
-  }
-
-  @Delete()
-  deleteMany() {
-  }
-
-  @Delete(':id')
-  deleteOneById() {
-  }
-
-  @Patch(':id')
-  updateOneById() {
-  }
-
-  @Patch()
-  updateMany() {
+  async create(@Body() createOrderDto: CreateOrderDto) {
+    return await this.ordersService.create(createOrderDto)
   }
 }

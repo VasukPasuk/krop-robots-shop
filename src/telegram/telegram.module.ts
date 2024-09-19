@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import {forwardRef, Module} from '@nestjs/common';
 import { TelegramService } from './telegram.service';
 import { TelegramController } from './telegram.controller';
 import {TelegrafModule} from "nestjs-telegraf";
@@ -9,13 +9,14 @@ import {OrdersService} from "../orders/orders.service";
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      envFilePath: ".env",
-    }),
+    forwardRef(() => OrdersModule),
     TelegrafModule.forRoot({
       token: process.env.TELEGRAM_BOT_TOKEN
     }),
-    OrdersModule
+    ConfigModule.forRoot({
+      envFilePath: ".env",
+    }),
+
   ],
   controllers: [],
   providers: [TelegramService, TelegramController, PrismaService, OrdersService],

@@ -154,10 +154,31 @@ export class ProductsService {
           price: {
             lte: pagination.maxPrice,
             gte: pagination.minPrice,
-          }
+          },
+          size_label: "Стандарт"
         }
       },
-      published: true
+      published: true,
+      AND: [
+        {
+          ...(pagination.filterCategories.length > 0 && {
+            category_name: {
+              in: pagination.filterCategories
+            }
+          })
+        },
+        {
+          ...(pagination.filterTags.length > 0 && {
+            ProductHaveTag: {
+              some: {
+                tag_name: {
+                  in: pagination.filterTags
+                }
+              }
+            }
+          })
+        }
+      ],
     };
 
 
