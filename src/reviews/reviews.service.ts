@@ -13,16 +13,17 @@ export class ReviewsService {
   }
 
   async getMany(pagination: PaginationReviewDto) {
-    const {limit, page, flag} = pagination;
+    const {limit, page, flag, product_name} = pagination;
     const [items, count] = await Promise.all([
       this.prisma.review.findMany({
         skip: (page - 1) * limit,
         take: limit,
         orderBy: {
           created_at: {newest: "asc", latest: "desc"}[flag] as "asc" | "desc"
-        }
+        },
+        where: {product_name}
       }),
-      this.prisma.review.count()
+      this.prisma.review.count({where: {product_name}})
     ])
     return {
       items,
