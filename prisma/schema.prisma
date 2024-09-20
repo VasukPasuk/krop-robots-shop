@@ -21,7 +21,7 @@ model User {
   activated       Boolean @default(false)
   activation_link String? @unique
 
-  avatar_src String @unique
+  avatar_src String? @unique
 
   role Role @default(CUSTOMER)
 
