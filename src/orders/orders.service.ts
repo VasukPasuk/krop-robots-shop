@@ -61,6 +61,13 @@ export class OrdersService {
   }
 
   async fulfillOrder(orderId: number) {
+    const exists = await this.prisma.order.findUnique({
+      where: {id: orderId}
+    })
+
+    if (!exists) {
+      throw new NotFoundException(`Товар з ID ${orderId} оновити не вдалося.`)
+    }
     return this.prisma.order.update({
       where: {id: orderId},
       data: {

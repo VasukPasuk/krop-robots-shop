@@ -5,6 +5,7 @@ import {ConfigService} from "@nestjs/config";
 import {OrdersService} from "../orders/orders.service";
 import getNormalDate from "../__features/getNormalDate";
 import {Order, OrderItem, Variant} from "@prisma/client";
+import prepareMessageTemplate from "../__features/prepareMessageTemplate";
 
 @Update()
 export class TelegramController {
@@ -77,6 +78,9 @@ export class TelegramController {
     }
 
     await this.telegramService.fulfillOrder(orderId)
+
+    await ctx.reply(`Статус замовлення №${orderId} змінено на "Виконаний".`)
+    return
   }
 
   @Command("order")
@@ -91,6 +95,10 @@ export class TelegramController {
     }
     const orderId = parseInt(msg.split(" ")[1]);
 
+    if (isNaN(orderId)) {
+      return await ctx.reply(`Некоректний ID замовлення.`)
+    }
+
     const order = await this.telegramService.getOneOrder(orderId)
 
     if (!order) {
@@ -98,7 +106,7 @@ export class TelegramController {
       return
     }
 
-    await ctx.reply(this.orderInformation(order))
+    await ctx.reply(prepareMessageTemplate(order, orderId))
   }
 
   @Command("all_orders")
@@ -116,7 +124,7 @@ export class TelegramController {
     }
 
 
-    const styledOrdersText = orders.map((order, index) => this.orderInformation(order, index)).join("\n")
+    const styledOrdersText = orders.map((order, index) => prepareMessageTemplate(order, ++index)).join("\n")
 
     await ctx.reply(styledOrdersText)
   }
@@ -129,31 +137,6 @@ export class TelegramController {
 
         .oneTime()
     );
-  }
-
-  orderInformation(order: Order & Partial<{items: Array<OrderItem & any> }>, index?: number) {
-    return `\n---------------------- Замовлення ${index ? "#" + (++index) : ""} ----------------------\n` + (
-      `ID: ${order.id}\n` +
-      `ПІБ: ${order.first_surname} ${order.name} ${order.second_surname} \n` +
-      `Кількість товарів до замовлення: ${order.total_items} шт. \n` +
-      `Ціна замовлення: ${order.total_price} грн. \n` +
-      `Номер телефону: ${order.phone_number} \n` +
-      `E-mail: ${order.email} \n` +
-      `Тип платежу: ${order.payment_type}\n` +
-      `Дата створення: ${getNormalDate(order.created_at.toString())}\n`
-    ) + (
-      "\n----------------------------- Товари -----------------------------\n"
-    ) + (!!order.items && (
-      order.items.map((item) => (
-        `ID: ${item.id} \n` +
-        `Продукт: ${item.product_name} \n` +
-        `Кількість: ${item.amount} \n` +
-        `Ціна: ${item.price} \n` +
-        `Колір: ${item.color_name} \n` +
-        `Варіант: ${item.variant.size_label} \n` +
-        `Пластик: ${item.plastic} \n`
-      )).join("\n")
-    ))
   }
 
   @On("message")

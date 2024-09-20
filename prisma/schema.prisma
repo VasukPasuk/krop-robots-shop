@@ -112,13 +112,16 @@ model Review {
 
   product      Product @relation(fields: [product_name], references: [name])
   product_name String
-  user         User    @relation(fields: [user_id], references: [id])
-  user_id      Int
+
+  name    String
+  surname String
 
   body String
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+  User       User?    @relation(fields: [userId], references: [id])
+  userId     Int?
 
   @@map("reviews")
 }
@@ -173,18 +176,6 @@ model Order {
   comment      String?
   payment_type String
   delivery     Json
-  // dataJSON: JSON.stringify
-  // delivery_company: expanded,
-  // payment_type: data.payment_type,
-  // commentary: data.commentary,
-  // house: data.house,
-  // floor: data.floor,
-  // street: data.street,
-  // delivery_type: data.delivery_type,
-  // locality: data.locality,
-  // department_index: Number(data.department_index) || 1,
-  // mail_index: Number(data.mail_index) || 1,
-  //
 
   total_price Int
   total_items Int
