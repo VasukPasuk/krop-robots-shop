@@ -15,6 +15,10 @@ export class TelegramService {
   ) {
   }
 
+  setup() {
+    return this.prisma.user.findMany()
+  }
+
   getProducts() {
     return this.prisma.category.findMany({
       select: {

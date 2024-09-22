@@ -5,16 +5,14 @@ import { PrismaService } from '../utils/prisma.service';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { v4 as uuidv4 } from 'uuid';
-import { extname,  } from 'path';
-import {PhotosModule} from "../photos/photos.module";
-import {PhotosService} from "../photos/photos.service";
+import { extname } from 'path';
 import {FilesService} from "../files/files.service";
 
 @Module({
   imports: [
     MulterModule.register({
       storage: diskStorage({
-        destination: './static/products',
+        destination: './static',
         filename: (req, file, callback) => {
           const uniqueSuffix = `${uuidv4()}${extname(file.originalname)}`;
           callback(null, uniqueSuffix);

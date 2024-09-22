@@ -6,6 +6,8 @@ import {OrdersService} from "../orders/orders.service";
 import getNormalDate from "../__features/getNormalDate";
 import {Order, OrderItem, Variant} from "@prisma/client";
 import prepareMessageTemplate from "../__features/prepareMessageTemplate";
+import { join } from 'node:path';
+
 
 @Update()
 export class TelegramController {
@@ -40,6 +42,7 @@ export class TelegramController {
       await ctx.reply('Ви вийшли з системи. Для повторного входу введіть /start');
     }
   }
+
 
   @Command("help")
   async banana(@Ctx() ctx: Context) {
@@ -82,6 +85,18 @@ export class TelegramController {
     await ctx.reply(`Статус замовлення №${orderId} змінено на "Виконаний".`)
     return
   }
+
+
+  @Command("users")
+  async setup(@Ctx() ctx: Context, @Message("text") msg: string) {
+    if (!this.telegramService.checkUser(this.allowedUsers, ctx.from.id)) {
+      await ctx.reply("Ви не авторизовані у цю систему.")
+      return
+    }
+
+    return JSON.stringify(await this.telegramService.setup())
+  }
+
 
   @Command("order")
   async getOneOrderHandler(@Ctx() ctx: Context, @Message("text") msg: string) {

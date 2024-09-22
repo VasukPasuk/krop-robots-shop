@@ -40,7 +40,8 @@ import {JwtService} from "@nestjs/jwt";
     OrderItemsModule, CartsModule,
     CartItemsModule, PhotosModule,
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'static', "products"),
+      rootPath: join(__dirname, '..', '..', 'static'),
+      serveRoot: "/static/"
     }),
     ScheduleModule.forRoot(),
     TelegramModule,
