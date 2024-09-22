@@ -5,7 +5,7 @@ import {CreateProductDto} from "./dto/create-product.dto";
 import {FilesService} from "../files/files.service";
 import {ProductIncludeDto} from "./dto/product-include.dto";
 import {UpdateProductDto} from "./dto/update-product.dto";
-import {Product} from "@prisma/client";
+import {Product, Tag} from "@prisma/client";
 
 @Injectable()
 export class ProductsService {
@@ -15,28 +15,28 @@ export class ProductsService {
   ) {
   }
 
-  async create(createProductDto: CreateProductDto | CreateProductDto[], files: Express.Multer.File[]) {
-    const isArray = Array.isArray(createProductDto);
-    if (isArray) {
-      return this.prisma.product.createMany({
-        data: [...createProductDto],
-        skipDuplicates: true
-      })
-
-    }
+  async create(createProductDto: CreateProductDto, files: Express.Multer.File[]) {
+    const {tags, variants, ...product} = createProductDto
     const convertFilesToDBData = files.map((file: Express.Multer.File, index) => ({
-      name: `${createProductDto.name}-num${index + 1}-${file.originalname}`,
+      name: `${product.name}-num${index + 1}-${file.originalname}`,
       source: file.filename
     }))
+
+
     return this.prisma.product.create({
       data: {
-        ...createProductDto,
+        ...product,
         photos: {
           createMany: {
             data: [...convertFilesToDBData],
             skipDuplicates: true
           }
-        }
+        },
+        ProductHaveTag: {
+          createMany: {
+            data: tags.map((tag) => ({tag_name: tag})),
+          }
+        },
       }
     })
   }

@@ -13,6 +13,8 @@ export class VariantsService {
 
 
   async create(createVariantDto: CreateVariantDto | CreateVariantDto[]) {
+    console.log(createVariantDto)
+
     const isArray = Array.isArray(createVariantDto);
     if (isArray) {
       return this.prisma.variant.createMany({data: [...createVariantDto]})

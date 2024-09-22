@@ -12,11 +12,6 @@ export class VariantsController {
   constructor(private readonly variantsService: VariantsService) {
   }
 
-  @Get()
-  getMany() {
-
-  }
-
   @Get(":id")
   getOne(@Param('id', ParseIntPipe) id: number) {
     return this.variantsService.getOne(id)
@@ -32,16 +27,11 @@ export class VariantsController {
     return this.variantsService.create(createVariantDto)
   }
 
-  // @Delete()
-  // deleteAll() {
-  //   return this.variantsService.deleteMany()
-  // }
 
   @Delete("/products/:name")
   deleteAllOfProduct(@Param('name') name: string) {
     return this.variantsService.deleteAllOfProduct(name)
   }
-
 
   @Delete(':id')
   deleteOneById(@Param('id', ParseIntPipe) id: number) {
@@ -51,10 +41,5 @@ export class VariantsController {
   @Patch(':id')
   updateOneById(@Body() updateVariantDto: UpdateVariantDto, @Param('id', ParseIntPipe) id: number) {
     return this.variantsService.updateOneById(id, updateVariantDto)
-  }
-
-  @Patch()
-  updateMany() {
-
   }
 }

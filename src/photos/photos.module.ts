@@ -12,7 +12,7 @@ import {extname} from "path";
   imports: [
     MulterModule.register({
       storage: diskStorage({
-        destination: './static/products',
+        destination: './static',
         filename: (_, file, callback) => {
           const uniqueSuffix = `${uuidv4()}${extname(file.originalname)}`;
           callback(null, uniqueSuffix);
