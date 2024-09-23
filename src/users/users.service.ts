@@ -20,7 +20,7 @@ export class UsersService implements OnApplicationBootstrap {
 
     const userEmail = this.configService.get<string>('ADMIN_EMAIL')
 
-    const userExist = await this.prisma.user.findUnique({
+    const userExist = await this.prisma.user.findFirst({
       where: {email: userEmail}
     })
 
