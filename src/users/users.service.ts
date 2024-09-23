@@ -3,35 +3,36 @@ import {PrismaService} from "../utils/prisma.service";
 import {UserPaginationDto} from "./dto/user-pagination.dto";
 import * as bcrypt from "bcrypt";
 import process from "node:process";
+import {ConfigService} from "@nestjs/config";
 
 @Injectable()
 export class UsersService implements OnModuleInit {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService, private readonly configService: ConfigService) {}
 
   async onModuleInit() {
     await this.createFirstAdmin()
   }
 
   private async createFirstAdmin() {
-    const pass = await bcrypt.hash(process.env.ADMIN_PASSWORD, 10)
+    const pass = await bcrypt.hash(this.configService.get<string>('ADMIN_PASSWORD'), 10)
     const admin = await this.prisma.user.upsert({
       where: {email: process.env.ADMIN_LOGIN},
       update: {
-        email: process.env.ADMIN_LOGIN,
-        login: process.env.ADMIN_LOGIN,
-        name: process.env.ADMIN_NAME,
-        first_surname: process.env.FIRST_SURNAME,
-        second_surname: process.env.SECOND_SURNAME,
+        email: this.configService.get<string>('ADMIN_EMAIL'),
+        login: this.configService.get<string>('ADMIN_LOGIN'),
+        name: this.configService.get<string>('ADMIN_NAME'),
+        first_surname: this.configService.get<string>('ADMIN_FIRST_SURNAME'),
+        second_surname: this.configService.get<string>('ADMIN_SECOND_SURNAME'),
         password: pass,
         role: 'ADMIN',
         activation_link: "*"
       },
       create: {
-        email: process.env.ADMIN_LOGIN,
-        login: process.env.ADMIN_LOGIN,
-        name: process.env.ADMIN_NAME,
-        first_surname: process.env.FIRST_SURNAME,
-        second_surname: process.env.SECOND_SURNAME,
+        email: this.configService.get<string>('ADMIN_EMAIL'),
+        login: this.configService.get<string>('ADMIN_LOGIN'),
+        name: this.configService.get<string>('ADMIN_NAME'),
+        first_surname: this.configService.get<string>('ADMIN_FIRST_SURNAME'),
+        second_surname: this.configService.get<string>('ADMIN_SECOND_SURNAME'),
         password: pass,
         role: 'ADMIN',
         activation_link: "*"
