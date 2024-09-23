@@ -37,6 +37,11 @@ export class ProductsService {
             data: tags.map((tag) => ({tag_name: tag})),
           }
         },
+        variants: {
+          createMany: {
+            data: variants
+          }
+        }
       }
     })
   }
@@ -95,7 +100,7 @@ export class ProductsService {
     })
 
     for (const fname of fileNames) {
-      await this.fileService.delete(fname.source, "products")
+      await this.fileService.delete(fname.source)
     }
 
     return this.prisma.product.delete({where: {name}})

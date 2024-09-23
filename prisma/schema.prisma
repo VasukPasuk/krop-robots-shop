@@ -151,7 +151,7 @@ model Variant {
 
   order_items OrderItem[]
 
-  product      Product    @relation(fields: [product_name], references: [name])
+  product      Product    @relation(fields: [product_name], references: [name], onDelete: Cascade)
   product_name String
   CartItem     CartItem[]
 

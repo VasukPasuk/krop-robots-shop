@@ -37,8 +37,8 @@ export class FilesService {
       throw new InternalServerErrorException();
     }
   }
-  async delete(fileName: string, destination: DestinationUnion) {
-    const filePath = path.join(__dirname, "..", "..", 'static', destination, fileName);
+  async delete(fileName: string) {
+    const filePath = path.join(__dirname, "..", "..", 'static', fileName);
     return fs.unlink(filePath, (e) => {
       if (e) throw new InternalServerErrorException(e.message);
     })
