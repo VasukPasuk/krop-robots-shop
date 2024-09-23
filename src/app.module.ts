@@ -32,7 +32,7 @@ import {JwtService} from "@nestjs/jwt";
   imports: [UsersModule,
     CategoriesModule,
     ProductsModule, VariantsModule,
-    ConfigModule.forRoot({isGlobal: true}),
+    ConfigModule.forRoot({isGlobal: true, envFilePath: '.env'}),
     ColorsModule, TagsModule,
     UsersFavouriteProductsModule,
     ProductsHaveTagsModule,
