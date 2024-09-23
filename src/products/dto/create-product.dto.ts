@@ -1,7 +1,6 @@
-import {PickType} from "@nestjs/mapped-types";
-import {BaseProductDto} from "./base-product.dto";
+
 import {Variant} from "@prisma/client";
-import {IsArray, IsString} from "class-validator";
+import {isArray, IsArray, IsString} from "class-validator";
 import {ApiProperty} from "@nestjs/swagger";
 import {Transform} from "class-transformer";
 
@@ -16,11 +15,13 @@ export class CreateProductDto {
   description: string
 
   @Transform(({value}) => {
-    return value.map((str: string) => JSON.parse(str))
+    return JSON.parse(value)
   })
   variants: Omit<Variant, "id" | "created_at" | "updated_at">[]
 
   @ApiProperty()
-  @IsArray()
+  @Transform(({value}) => {
+    return JSON.parse(value)
+  })
   tags: string[]
 }
