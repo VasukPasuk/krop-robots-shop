@@ -60,6 +60,8 @@ import {JwtService} from "@nestjs/jwt";
   ],
 })
 
+
+
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(LoggingMiddleware).forRoutes('*');
