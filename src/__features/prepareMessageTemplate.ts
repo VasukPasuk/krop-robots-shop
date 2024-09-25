@@ -7,7 +7,22 @@ const STATUS_DICT = {
   "FULFILLED": "Виконано",
 }
 
+const DELIVERY_COMPANY_DICT = {
+  "NEW_POST_MAIL": "Нова пошта",
+  "UKR_POST_MAIL": "Укрпошта",
+}
+
+interface IDelivery {
+  delivery_type: string
+  locality: string
+  department_index: string
+  mail_index: number
+  delivery_company: string
+}
+
+
 export default function prepareMessageTemplate(order: Order & Partial<{items: Array<OrderItem & any> }>, index?: number) {
+  const DELIVERY = JSON.parse(order.delivery as string) as IDelivery  ;
   return `\n---------------------- Замовлення ${index ? "#" + index : ""} ----------------------\n` + (
     `ID: ${order.id}\n` +
     `ПІБ: ${order.first_surname} ${order.name} ${order.second_surname} \n` +
@@ -17,6 +32,10 @@ export default function prepareMessageTemplate(order: Order & Partial<{items: Ar
     `E-mail: ${order.email} \n` +
     `Тип платежу: ${order.payment_type}\n` +
     `Статус: ${STATUS_DICT[order.status]}\n` +
+    `Коментар: ${order.comment ? order.comment : "Відсутній" }\n` +
+    `Тип платежу: ${order.payment_type}\n` +
+    `Статус: ${STATUS_DICT[order.status]}\n` +
+    `Служба доставки: ${DELIVERY_COMPANY_DICT[DELIVERY.delivery_company]}\n` +
     `Дата створення: ${getNormalDate(order.created_at.toString())}\n`
   ) + (
     "\n----------------------------- Товари -----------------------------\n"

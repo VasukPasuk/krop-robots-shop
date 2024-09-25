@@ -27,7 +27,6 @@ export class CreateOrderDto {
   second_surname: string
 
   @ApiProperty()
-  @IsNotEmpty()
   @IsString()
   comment: string
 
