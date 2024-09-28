@@ -60,8 +60,8 @@ model Product {
 
   photos Photo[]
 
-  category      Category @relation(fields: [category_name], references: [name])
-  category_name String
+  category      Category? @relation(fields: [category_name], references: [name], onDelete: SetNull)
+  category_name String?
 
   User_Favourite_Product UserFavouriteProduct[]
   ProductHaveTag         ProductHaveTag[]
@@ -110,8 +110,8 @@ model UserFavouriteProduct {
 model Review {
   id Int @id @default(autoincrement())
 
-  product      Product @relation(fields: [product_name], references: [name])
-  product_name String
+  product      Product? @relation(fields: [product_name], references: [name], onDelete: SetNull)
+  product_name String?
 
   name    String
   surname String
@@ -120,7 +120,7 @@ model Review {
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-  User       User?    @relation(fields: [userId], references: [id])
+  User       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
   userId     Int?
 
   @@map("reviews")
@@ -167,15 +167,31 @@ model Variant {
 model Order {
   id Int @id @default(autoincrement())
 
-  phone_number   String
-  email          String
-  name           String
-  first_surname  String
-  second_surname String
+  // Обо'вязкові параметри замовлення
+  phone    String
+  email    String
+  name     String
+  surname  String
+  region   String
+  locality String
 
-  comment      String?
-  payment_type String
-  delivery     Json
+  comment String? @default("")
+
+  // Опція при способі оплати юр. особи
+  EDRPOY_CODE  String @default("")
+  legal_entity String @default("")
+
+  // Опції при доставкою кур'єром
+  street     String @default("")
+  floor      String @default("")
+  house      String @default("")
+  appartment String @default("")
+
+  // Типи замовлення та доставки
+  delivery_type String
+  payment_type  String
+
+  department_address String @default("")
 
   total_price Int
   total_items Int
@@ -193,17 +209,18 @@ model Order {
 model OrderItem {
   id Int @id @default(autoincrement())
 
-  order   Order   @relation(fields: [order_id], references: [id])
-  product Product @relation(fields: [product_name], references: [name])
-  color   Color   @relation(fields: [color_name], references: [name])
-  variant Variant @relation(fields: [variant_id], references: [id])
+  order   Order?   @relation(fields: [order_id], references: [id], onDelete: SetNull)
+  product Product? @relation(fields: [product_name], references: [name], onDelete: SetNull)
+  color   Color?   @relation(fields: [color_name], references: [name], onDelete: SetNull)
+  variant Variant? @relation(fields: [variant_id], references: [id], onDelete: SetNull)
 
-  order_id     Int
-  product_name String
-  color_name   String
-  variant_id   Int
-  amount       Int    @default(1)
-  price        Int
+  order_id     Int?
+  product_name String?
+  color_name   String?
+  variant_id   Int?
+
+  amount Int @default(1)
+  price  Int
 
   plastic Plastic @default(CoPET)
 
@@ -216,7 +233,7 @@ model OrderItem {
 model Cart {
   id Int @id @default(autoincrement())
 
-  user        User       @relation(fields: [user_id], references: [id])
+  user        User       @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id     Int        @unique
   items       CartItem[]
   total_price Int
@@ -231,14 +248,14 @@ model Cart {
 model CartItem {
   id Int @id @default(autoincrement())
 
-  cart         Cart    @relation(fields: [cart_id], references: [id])
-  cart_id      Int
-  product      Product @relation(fields: [product_name], references: [name])
-  product_name String
-  color        Color   @relation(fields: [color_name], references: [name])
-  color_name   String
-  variant      Variant @relation(fields: [variant_id], references: [id])
-  variant_id   Int
+  cart         Cart?    @relation(fields: [cart_id], references: [id], onDelete: SetNull)
+  cart_id      Int?
+  product      Product? @relation(fields: [product_name], references: [name], onDelete: SetNull)
+  product_name String?
+  color        Color?   @relation(fields: [color_name], references: [name], onDelete: SetNull)
+  color_name   String?
+  variant      Variant? @relation(fields: [variant_id], references: [id], onDelete: SetNull)
+  variant_id   Int?
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -273,6 +290,26 @@ model Color {
 
   @@map("colors")
 }
+
+// model PurchaseHistory {
+//   id Int @id @default(autoincrement())
+//
+//   phone_number   String
+//   email          String
+//   name           String
+//   first_surname  String
+//   second_surname String
+//   product_name   Int
+//   productPrice   Int
+//   product_amount Int
+//
+//   comment      String?
+//   payment_type String
+//
+//
+//
+//   created_at   DateTime @default(now())
+// }
 
 enum Role {
   ADMIN

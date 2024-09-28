@@ -36,7 +36,7 @@ export class TelegramService {
   }
 
   async sendMessageToTelegram(message: string) {
-    return await this.bot.telegram.sendMessage(this.configService.get("DEN_USER_ID"), message);
+    return await this.bot.telegram.sendMessage(this.configService.get("VAS_USER_ID"), message);
   }
 
   async fulfillOrder(orderId: number) {

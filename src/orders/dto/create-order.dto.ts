@@ -1,43 +1,106 @@
 import {ApiProperty} from "@nestjs/swagger";
-import {ArrayMinSize, IsArray, IsJSON, IsNotEmpty, IsString, Length, MinLength} from "class-validator";
+import {
+  ArrayMinSize,
+  IsArray,
+  IsEmail,
+  IsJSON,
+  IsNotEmpty, IsNumber,
+  IsOptional,
+  IsString,
+  Length, Min,
+  MinLength
+} from "class-validator";
 
 export class CreateOrderDto {
   @ApiProperty()
-  @Length(12)
-  phone_number: string
+  @IsString()
+  @IsNotEmpty()
+  phone: string
 
   @ApiProperty()
+  @IsEmail()
   @IsNotEmpty()
-  @IsString()
   email: string
 
   @ApiProperty()
-  @IsNotEmpty()
   @IsString()
+  @IsNotEmpty()
   name: string
 
   @ApiProperty()
-  @IsNotEmpty()
   @IsString()
-  first_surname: string
-
-  @ApiProperty()
   @IsNotEmpty()
-  @IsString()
-  second_surname: string
+  surname: string
 
   @ApiProperty()
   @IsString()
-  comment: string
+  @IsNotEmpty()
+  region: string
 
   @ApiProperty()
-  @IsNotEmpty()
   @IsString()
+  @IsNotEmpty()
+  locality: string
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  comment: string | null
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  EDRPOY_CODE: string
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  legal_entity: string
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  street: string
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  floor: string
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  house: string
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  appartment: string
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  delivery_type: string
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
   payment_type: string
 
   @ApiProperty()
-  @IsNotEmpty()
-  delivery: string
+  @IsString()
+  @IsOptional()
+  department_address: string
+
+  @ApiProperty()
+  @IsNumber()
+  @Min(1)
+  total_price: number
+
+  @ApiProperty()
+  @IsNumber()
+  @Min(1)
+  total_items: number
 
   @IsArray()
   @ArrayMinSize(1)

@@ -202,18 +202,20 @@ export class ProductsService {
               size_label: "Стандарт"
             }
           }
-        }
+        },
       }),
       this.prisma.product.count({
         where: whereClause,
       }),
     ])
 
+    console.log(pagination.typeSort)
+
     // From high to low price
-    // items.sort((a, b) => b.variants[0].price - a.variants[0].price)
+    if (pagination.typeSort === "expensive_cheap") items.sort((a, b) => b.variants[0].price - a.variants[0].price)
 
     // From low to high price
-    // items.sort((a, b) => b.variants[0].price - a.variants[0].price)
+    if (pagination.typeSort === "cheap_expensive") items.sort((a, b) => a.variants[0].price - b.variants[0].price)
 
     return {
       items,

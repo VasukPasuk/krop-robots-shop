@@ -34,7 +34,11 @@ export class ProductPaginationDto extends BasePaginationDto {
   @Type(() => Number)
   @IsNumber()
   @Min(0)
-  maxPrice = 100000;
+  maxPrice = 100000
+
+  @IsString()
+  @IsOptional()
+  typeSort: "expensive_cheap" | "cheap_expensive" | null = null
 
   @Type(() => Number)
   @IsNumber()

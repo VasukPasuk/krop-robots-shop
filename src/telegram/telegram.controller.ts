@@ -3,16 +3,13 @@ import {Ctx, InjectBot, On, Update, Command, Message} from "nestjs-telegraf";
 import {Context, Markup, Telegraf} from "telegraf";
 import {ConfigService} from "@nestjs/config";
 import {OrdersService} from "../orders/orders.service";
-import getNormalDate from "../__features/getNormalDate";
-import {Order, OrderItem, Variant} from "@prisma/client";
 import prepareMessageTemplate from "../__features/prepareMessageTemplate";
-import { join } from 'node:path';
 
 
 @Update()
 export class TelegramController {
   private allowedUsers: Set<number> = new Set(); // Зберігаємо множину дозволених користувачів
-  private PASSWORD: string;
+  private readonly PASSWORD: string;
 
   constructor(
     @InjectBot() private readonly bot: Telegraf<Context>,

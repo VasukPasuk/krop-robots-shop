@@ -11,7 +11,7 @@ import {OrdersService} from "../orders/orders.service";
   imports: [
     forwardRef(() => OrdersModule),
     TelegrafModule.forRoot({
-      token: process.env.TELEGRAM_BOT_TOKEN
+      token: process.env.TELEGRAM_BOT_TOKEN,
     }),
     ConfigModule.forRoot({
       envFilePath: ".env",

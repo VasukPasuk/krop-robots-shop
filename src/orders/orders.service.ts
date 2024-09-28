@@ -17,16 +17,12 @@ export class OrdersService {
   }
 
   async create(createOrderDto: CreateOrderDto) {
-    const {items, delivery, ...rest} = createOrderDto
-    const totalAmount = items.reduce((prev, current) => prev + current.amount, 0)
-    const totalPrice = items.reduce((prev, current) => prev + current.price, 0)
+    const {items, ...rest} = createOrderDto
+
 
     const order = await this.prisma.order.create({
       data: {
         ...rest,
-        total_items: totalAmount,
-        total_price: totalPrice,
-        delivery: delivery,
         items: {
           createMany: {
             data: items.map((cartItem) => ({
