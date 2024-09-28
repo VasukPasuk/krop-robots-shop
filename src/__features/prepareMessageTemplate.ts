@@ -7,6 +7,9 @@ const STATUS_DICT = {
   "FULFILLED": "Виконано",
 }
 
+
+const ifEmpty = (str: string) => Boolean(str.trim()) ? str : "--"
+
 export default function prepareMessageTemplate(order: Order & Partial<{items: Array<OrderItem & any> }>, index?: number) {
   return `\n---------------------- Замовлення ${index ? "#" + index : ""} ----------------------\n` + (
     `ID: ${order.id}\n` +
@@ -17,10 +20,24 @@ export default function prepareMessageTemplate(order: Order & Partial<{items: Ar
     `E-mail: ${order.email} \n` +
     `Тип платежу: ${order.payment_type}\n` +
     `Статус: ${STATUS_DICT[order.status]}\n` +
-    `Коментар: ${order.comment ? order.comment : "Відсутній" }\n` +
-    `Тип платежу: ${order.payment_type}\n` +
-    `Статус: ${STATUS_DICT[order.status]}\n` + +
-    `Дата створення: ${getNormalDate(order.created_at.toString())}\n`
+    `Коментар: ${ifEmpty(order.comment)}\n` +
+    `Доставка: ${order.delivery_type}\n` +
+    `Область: ${ifEmpty(order.region)}\n` +
+    `Місто: ${ifEmpty(order.locality)}\n` +
+    `Відділення: ${ifEmpty(order.department_address)}\n` +
+    `\nЯкщо кур'єром ↓\n\n` +
+
+    `Вулиця: ${ifEmpty(order.street)}\n` +
+    `Будинок: ${ifEmpty(order.house)}\n` +
+    `Квартира: ${ifEmpty(order.appartment)}\n` +
+    `Поверх: ${ifEmpty(order.floor)}\n` +
+
+    `\nЯкщо рахунок юр. особи ↓\n\n` +
+
+    `Код ЄДРПОУ: ${ifEmpty(order.EDRPOY_CODE)}\n` +
+    `Повна назва юр. особи: ${ifEmpty(order.legal_entity)}\n` +
+
+    `\nДата створення: ${getNormalDate(order.created_at as unknown as string)}\n`
   ) + (
     "\n----------------------------- Товари -----------------------------\n"
   ) + (!!order.items && (

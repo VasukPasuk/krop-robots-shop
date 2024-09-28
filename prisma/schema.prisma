@@ -291,25 +291,23 @@ model Color {
   @@map("colors")
 }
 
-// model PurchaseHistory {
-//   id Int @id @default(autoincrement())
-//
-//   phone_number   String
-//   email          String
-//   name           String
-//   first_surname  String
-//   second_surname String
-//   product_name   Int
-//   productPrice   Int
-//   product_amount Int
-//
-//   comment      String?
-//   payment_type String
-//
-//
-//
-//   created_at   DateTime @default(now())
-// }
+model PurchaseHistory {
+  id Int @id @default(autoincrement())
+
+  phone_number   String
+  email          String
+  name           String
+  first_surname  String
+  second_surname String
+  product_names  String
+  productPrice   Int
+  product_amount Int
+
+  comment      String?
+  payment_type String
+
+  created_at DateTime @default(now())
+}
 
 enum Role {
   ADMIN
