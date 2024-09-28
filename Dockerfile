@@ -16,9 +16,6 @@ COPY . .
 # Run Prisma Client
 RUN npx prisma generate
 
-# Run Prisma Migration
-RUN npx prisma migrate
-
 # Build the NestJS app
 RUN npm run build
 
