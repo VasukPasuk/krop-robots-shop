@@ -1,14 +1,17 @@
 
 import {Variant} from "@prisma/client";
-import {isArray, IsArray, IsString} from "class-validator";
+import {isArray, IsArray, IsNotEmpty, IsString} from "class-validator";
 import {ApiProperty} from "@nestjs/swagger";
 import {Transform} from "class-transformer";
 
 export class CreateProductDto {
   @IsString()
+  @IsNotEmpty()
   category_name: string
 
   @IsString()
+  @Transform(({value}) => value.trim())
+  @IsNotEmpty()
   name: string
 
   @IsString()

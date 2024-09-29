@@ -3,6 +3,8 @@ import {PrismaService} from "../utils/prisma.service";
 import {CreateOrderDto} from "./dto/create-order.dto";
 import {TelegramService} from "../telegram/telegram.service";
 import prepareMessageTemplate from "../__features/prepareMessageTemplate";
+import {OrderPaginationDTO} from "./dto/order-pagination.dto";
+import {OrderStatus} from "@prisma/client";
 
 @Injectable()
 export class OrdersService {
@@ -85,6 +87,30 @@ export class OrdersService {
             }
           }
         }
+      }
+    })
+  }
+
+  async getManyOrders(orderPaginationDTO: OrderPaginationDTO) {
+    const {page, limit} = orderPaginationDTO;
+    const [items, count] = await Promise.all([
+      this.prisma.order.findMany({
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      this.prisma.order.count()
+    ])
+    return {
+      items,
+      count
+    }
+  }
+
+  async changeOrderStatus(id: number, status: OrderStatus) {
+    return this.prisma.order.update({
+      where: {id: id},
+      data: {
+        status: status
       }
     })
   }

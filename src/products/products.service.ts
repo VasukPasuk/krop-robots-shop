@@ -17,6 +17,13 @@ export class ProductsService {
 
   async create(createProductDto: CreateProductDto, files: Express.Multer.File[]) {
     const {tags, variants, ...product} = createProductDto
+
+    const isExist = await this.getUniqueByName(product.name)
+
+    if (Boolean(isExist)) {
+      throw new BadRequestException(`Продукт ${product.name} вже існує.`)
+    }
+
     const convertFilesToDBData = files.map((file: Express.Multer.File, index) => ({
       name: `${product.name}-num${index + 1}-${file.originalname}`,
       source: file.filename
@@ -62,6 +69,14 @@ export class ProductsService {
 
     if (!product) throw new NotFoundException(`Товару з індентифікатором ${identifier} не знайдено.`)
     return product
+  }
+
+  async getUniqueByName(name: string) {
+    return this.prisma.product.findUnique({
+      where: {
+        name: name
+      }
+    })
   }
 
   async getMany(pagination: ProductPaginationDto) {
@@ -209,7 +224,6 @@ export class ProductsService {
       }),
     ])
 
-    console.log(pagination.typeSort)
 
     // From high to low price
     if (pagination.typeSort === "expensive_cheap") items.sort((a, b) => b.variants[0].price - a.variants[0].price)

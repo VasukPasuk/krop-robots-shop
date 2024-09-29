@@ -41,11 +41,6 @@ export class ProductsController {
     return this.productsService.create(createProductDto, photos)
   }
 
-  @Delete()
-  deleteMany() {
-    return this.productsService.deleteMany()
-  }
-
   @Delete(':name')
   deleteOneByName(@Param("name") name: string) {
     return this.productsService.deleteOne(name)
